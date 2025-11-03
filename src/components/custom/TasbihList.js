@@ -1,24 +1,35 @@
 import React, { useState } from 'react';
-import { View, FlatList, Text } from 'react-native'; // You may switch Text to ui/Text later
-import { styles } from '../../styles/styles';
-import { initialAzkaar } from '../../data/azkaar';
+import { View, Text, Button, FlatList } from 'react-native';
+import { styles } from '../styles/styles';
+import { initialAzkaar } from '../data/dataAzkaar';
 
-/**
- * Custom/TasbihList
- * Renders a FlatList of azkaar with their counts.
- * NOTE: Increment/Decrement buttons are intentionally NOT implemented.
- * Students will add + and - controls using UI/Button and update state accordingly.
- */
 export default function TasbihList() {
   const [items, setItems] = useState(initialAzkaar);
 
-  // HINT ONLY (do not complete): you will need handlers like increment(id) / decrement(id)
+  // Increment function
+  const increment = (id) => {
+    const updated = items.map(item => {
+      return item.id === id ? { ...item, count: item.count + 1 } : item;
+    });
+    setItems(updated);
+  };
 
+  // Decrement function
+  const decrement = (id) => {
+    const updated = items.map(item => {
+      // Ensure count does not go below 0
+      return item.id === id && item.count > 0 ? { ...item, count: item.count - 1 } : item;
+    });
+    setItems(updated);
+  };
+
+  // Render each item
   const renderItem = ({ item }) => (
-    <View style={styles.itemRow}>
+    <View style={styles.itemContainer}>
       <Text style={styles.itemName}>{item.phrase}</Text>
-      <Text style={styles.counter}>{item.count}</Text>
-      {/* TODO: Add increment/decrement buttons here using ui/Button */}
+      <Text style={styles.itemCount}>{item.count}</Text>
+      <Button title="-" onPress={() => decrement(item.id)} />
+      <Button title="+" onPress={() => increment(item.id)} />
     </View>
   );
 
@@ -27,7 +38,7 @@ export default function TasbihList() {
       <Text style={styles.sectionTitle}>Tasbih Counter</Text>
       <FlatList
         data={items}
-        keyExtractor={(it) => it.id}
+        keyExtractor={(item) => item.id}
         renderItem={renderItem}
       />
     </View>
